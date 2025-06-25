@@ -1,4 +1,4 @@
-python-dateutil==2.9.0.post0
+python-dateutil==2.9.0
 ﻿joblib==1.5.1
 keras==3.10.0
 numpy==1.26.4
