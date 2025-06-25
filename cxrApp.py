@@ -2,12 +2,13 @@ import streamlit as st
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import img_to_array
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import joblib
 import os
 import time
+from PIL import Image
 
 # === Load model dan komponen ===
 scaler = joblib.load('STD_scaler.pkl')
@@ -21,7 +22,8 @@ resnet_model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
 # === Fungsi ekstraksi fitur dari 1 gambar ===
 def extract_features_from_image(img_path):
     try:
-        img = load_img(img_path, target_size=(224, 224), color_mode='rgb')
+        img = Image.open(img_path).convert("RGB")
+        img = img.resize((224, 224))
         img_array = img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = preprocess_input(img_array)
@@ -35,6 +37,7 @@ def extract_features_from_image(img_path):
 def predict(features, use_pca=False):
     try:
         start_time = time.time()
+
         features_scaled = scaler.transform([features])
         original_features_display = features_scaled.flatten()
 
@@ -51,12 +54,7 @@ def predict(features, use_pca=False):
 
         label_map = {0: "COVID-19", 1: "Pneumonia", 2: "Normal"}
         elapsed_time = time.time() - start_time
-
-        # Konversi ke persen dan tambahkan simbol %
-        class_probs = {
-            label_map[i]: f"{round(float(probabilities[i]) * 100, 2)}%"
-            for i in range(len(probabilities))
-        }
+        class_probs = {label_map[i]: f"{probabilities[i]*100:.2f}%" for i in range(len(probabilities))}
 
         return label_map.get(predicted_class, "Tidak diketahui"), original_features_display, used_features, elapsed_time, class_probs
     except Exception as e:
@@ -89,7 +87,7 @@ st.title("🩺 Klasifikasi COVID-19 dan Pneumonia dari Citra X-Ray Dada")
 
 # === Sidebar navigasi ===
 st.sidebar.header("MENU")
-page = st.sidebar.radio("Silahkan pilih menu :", ["🏠 Beranda", "🖼️ Input Gambar", "🧪 Try Sample"])
+page = st.sidebar.radio("Pilih menu :", ["🏠 Beranda", "🖼️ Input Gambar", "🧪 Try Sample"])
 
 # === Beranda ===
 if page == "🏠 Beranda":
@@ -100,7 +98,7 @@ if page == "🏠 Beranda":
     - Klasifikasi menggunakan `Feed Forward Neural Network (FFNN)`
     - Bisa memilih klasifikasi **dengan atau tanpa PCA**
     - Akurasi model **Dengan PCA** mencapai 91%
-    - Akurasi model **Tanpa PCA** mencapai 88%
+    - Akurasi model **Tanpa PCA**  mencapai 88%
     """)
     if st.button("📥 Unduh Dataset dari Kaggle"):
         st.markdown("[Link Dataset COVIDQU - Kaggle](https://www.kaggle.com/datasets/anasmohammedtahir/covidqu)", unsafe_allow_html=True)
@@ -112,9 +110,10 @@ elif page == "🖼️ Input Gambar":
     use_pca = st.radio("Gunakan PCA untuk Prediksi?", ["Ya", "Tidak"]) == "Ya"
 
     if uploaded_file:
-        with open("temp_image.png", "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.image("temp_image.png", caption="Gambar yang Diunggah", use_container_width=True)
+        image = Image.open(uploaded_file).convert("RGB")
+        resized_image = image.resize((224, 224))
+        st.image(resized_image, caption="Gambar yang Diunggah (224x224)", width=300)
+        resized_image.save("temp_image.png")
 
         if st.button("🔍 Prediksi", key="pred_lokal"):
             features = extract_features_from_image("temp_image.png")
@@ -131,12 +130,9 @@ elif page == "🖼️ Input Gambar":
 
                 if result is not None:
                     st.success(f"✅ Hasil Prediksi: **{result}**")
-
                 if class_probs is not None:
                     st.markdown("### 📈 Probabilitas Kelas:")
-                    for cls, prob in class_probs.items():
-                        st.write(f"{cls}: {prob}")
-
+                    st.write(class_probs)
                 if pred_time is not None:
                     st.info(f"⏱️ Waktu Prediksi: **{pred_time:.4f} detik**")
 
@@ -152,7 +148,7 @@ elif page == "🧪 Try Sample":
             for img_path in sample_images[cls]:
                 filename = os.path.basename(img_path)
                 if st.button(f"Prediksi {filename}", key=img_path):
-                    st.image(img_path, caption=filename, use_container_width=True)
+                    st.image(img_path, caption=filename, width=300)
                     features = extract_features_from_image(img_path)
                     if features is not None:
                         result, ori_feats, used_feats, pred_time, class_probs = predict(features, use_pca=use_pca)
@@ -167,11 +163,8 @@ elif page == "🧪 Try Sample":
 
                         if result is not None:
                             st.success(f"✅ Hasil Prediksi: **{result}**")
-
                         if class_probs is not None:
                             st.markdown("### 📈 Probabilitas Kelas:")
-                            for cls_name, prob in class_probs.items():
-                                st.write(f"{cls_name}: {prob}")
-
+                            st.write(class_probs)
                         if pred_time is not None:
                             st.info(f"⏱️ Waktu Prediksi: **{pred_time:.4f} detik**")
