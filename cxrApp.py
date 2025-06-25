@@ -88,8 +88,8 @@ st.markdown("""
 st.title("🩺 Klasifikasi COVID-19 dan Pneumonia dari Citra X-Ray Dada")
 
 # === Sidebar navigasi ===
-st.sidebar.header("Navigasi")
-page = st.sidebar.radio("Pilih Halaman", ["🏠 Beranda", "🖼️ Input Gambar", "🧪 Try Sample"])
+st.sidebar.header("MENU")
+page = st.sidebar.radio( ["🏠 Beranda", "🖼️ Input Gambar", "🧪 Try Sample"])
 
 # === Beranda ===
 if page == "🏠 Beranda":
