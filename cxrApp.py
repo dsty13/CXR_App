@@ -84,11 +84,11 @@ st.markdown("""
 st.title("🩺 Klasifikasi COVID-19 dan Pneumonia dari Citra X-Ray Dada")
 
 # === Sidebar Navigasi ===
-st.sidebar.header("Navigasi")
-page = st.sidebar.radio("Pilih Halaman", ["🏠 Beranda", "🖼️ Input Gambar", "🧪 Try Sample"])
+st.sidebar.header("Navigation")
+page = st.sidebar.radio("Select Navigation", ["🏠 Home", "🖼️ Input Image", "🧪 Try Sample"])
 
 # === Beranda ===
-if page == "🏠 Beranda":
+if page == "🏠 Home":
     st.markdown("### Deskripsi Aplikasi:")
     st.markdown("""
     - Mengklasifikasikan citra X-Ray dada menjadi: **COVID-19**, **Pneumonia**, atau **Normal**
@@ -102,7 +102,7 @@ if page == "🏠 Beranda":
         st.markdown("[Link Dataset COVIDQU - Kaggle](https://www.kaggle.com/datasets/anasmohammedtahir/covidqu)", unsafe_allow_html=True)
 
 # === Halaman Input Gambar ===
-elif page == "🖼️ Input Gambar":
+elif page == "🖼️ Input Image":
     st.subheader("Input Gambar dari Lokal")
     uploaded_file = st.file_uploader("Unggah gambar (jpg, jpeg, png)", type=["jpg", "jpeg", "png"])
     use_pca = st.radio("Gunakan PCA untuk Prediksi?", ["Ya", "Tidak"]) == "Ya"
