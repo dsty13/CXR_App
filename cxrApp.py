@@ -85,7 +85,7 @@ st.title("🩺 Klasifikasi COVID-19 dan Pneumonia dari Citra X-Ray Dada")
 
 # === Sidebar Navigasi ===
 st.sidebar.header("Navigation")
-page = st.sidebar.radio("Select Navigation : ", ["🏠 Home", "🖼️ Input Image", "🧪 Try Sample"])
+page = st.sidebar.radio("Select Navigation", ["🏠 Home", "🖼️ Input image", "🧪 Try Sample"])
 
 # === Beranda ===
 if page == "🏠 Beranda":
