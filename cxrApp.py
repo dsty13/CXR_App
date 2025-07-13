@@ -8,12 +8,28 @@ from sklearn.decomposition import PCA
 import joblib
 import os
 import time
+import gdown
 
+# ── Konstanta file PCA dari Google Drive ──
+FILE_ID = "1j-a7iW1PITw-MaFi-0jcPQAZ1ri2N6dN"
+PCA_LOCAL_PATH = "BEST_PCA.pkl"      # lokasi setelah diunduh
+
+@st.cache_data(show_spinner=" Mengunduh BEST_PCA.pkl...")
+def fetch_best_pca() -> str:
+    """
+    Download BEST_PCA.pkl sekali saja (cached).
+    Mengembalikan path lokal.
+    """
+    if not os.path.exists(PCA_LOCAL_PATH):
+        url = f"https://drive.google.com/uc?id={FILE_ID}"
+        gdown.download(url, PCA_LOCAL_PATH, quiet=False)
+    return PCA_LOCAL_PATH
+    
 # === Load model dan komponen ===
-pathpca = "https://drive.google.com/file/d/1j-a7iW1PITw-MaFi-0jcPQAZ1ri2N6dN/view?usp=sharing"
 scaler = joblib.load('STD_scaler.pkl')
-pca = joblib.load('PCA_COMPONENT2.pkl')
-model_non_pca = tf.keras.models.load_model(TanpaPCA.keras')
+pca_path = fetch_best_pca()
+pca = joblib.load(pca_path)
+model_non_pca = tf.keras.models.load_model('TanpaPCA.keras')
 model_pca = tf.keras.models.load_model('DenganPCA.keras')
 
 # === Load ResNet50 untuk ekstraksi fitur ===
