@@ -113,7 +113,7 @@ if page == "🏠 Home":
     - Klasifikasi menggunakan `Feed Forward Neural Network (FFNN)`
     - Bisa memilih klasifikasi **dengan atau tanpa PCA**
     - Akurasi model **Dengan PCA** mencapai 91%
-    - Akurasi model **Tanpa PCA**  mencapai 88%
+    - Akurasi model **Tanpa PCA**  mencapai 90%
     """)
     if st.button("📥 Unduh Dataset dari Kaggle"):
         st.markdown("[Link Dataset COVIDQU - Kaggle](https://www.kaggle.com/datasets/anasmohammedtahir/covidqu)", unsafe_allow_html=True)
