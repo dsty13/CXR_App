@@ -10,10 +10,11 @@ import os
 import time
 
 # === Load model dan komponen ===
+pathpca = "https://drive.google.com/file/d/1j-a7iW1PITw-MaFi-0jcPQAZ1ri2N6dN/view?usp=sharing"
 scaler = joblib.load('STD_scaler.pkl')
 pca = joblib.load('PCA_COMPONENT2.pkl')
-model_non_pca = tf.keras.models.load_model('model_nonPCA.keras')
-model_pca = tf.keras.models.load_model('PCA_MODEL2.keras')
+model_non_pca = tf.keras.models.load_model(TanpaPCA.keras')
+model_pca = tf.keras.models.load_model('DenganPCA.keras')
 
 # === Load ResNet50 untuk ekstraksi fitur ===
 resnet_model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
